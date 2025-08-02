@@ -24,26 +24,33 @@ function ready() {
 function action() {
   return new Promise((resolve, reject) => {
     let delay = (Math.random() + 1) * 2
-    let startTime = Date.now();
     setTimeout(() => {
       console.log("******")
-      resolve(startTime)
+      resolve(Date.now())
     }, delay * 1000)
   })
 }
 
-function key_press(start_time) {
-  process.stdin.setRawMode(true);
-  process.stdin.resume();
-  process.stdin.setEncoding('utf8');
-  process.stdin.on('data', function (key) {
-    if (key === ' ') {
-      if (startTime) {
-        const reactionTime = (Date.now() - startTime) / 1000;
-        console.log(`your time:`, reactionTime.toFixed(3));
-        process.exit();
+function key_press(startTime) {
+  return new Promise((resolve, reject) => {
+    process.stdin.setRawMode(true);
+    process.stdin.resume();
+    process.stdin.setEncoding('utf8');
+    process.stdin.on('data', function (key) {
+      if (key === ' ') {
+        if (startTime) {
+          const reactionTime = (Date.now() - startTime) / 1000;
+          console.log(`your time:`, reactionTime.toFixed(3));
+          
+          // process.stdin.removeListener('data', onKeyPress);
+          process.stdin.setRawMode(false);
+          process.stdin.pause();
+          
+          resolve()
+        }
       }
-    }
+    })
+    
   })
 }
 
@@ -57,22 +64,20 @@ function zoj_fard(trail) {
   }
 }
 
-async function run() {
-  console.log(zoj_fard(trail))
+async function run(trail) { 
   try {
+    console.log(zoj_fard(trail))
     await ready()
     let startTime = await action()
-    key_press(startTime)
+    await key_press(startTime)
     console.log(`end`)
-    
+    return run(trail + 1)
   }
   catch {
     console.log('error catched')
   }
+  
 }
 
 let trail = 0
-// while(1) {
-trail += 1
 run()
-// }
