@@ -26,7 +26,7 @@ function action() {
     let delay = (Math.random() + 1) * 2
     setTimeout(() => {
       console.log("******")
-      resolve(Date.now())
+      resolve()
     }, delay * 1000)
   })
 }
@@ -39,8 +39,8 @@ function key_press(startTime) {
     process.stdin.on('data', function (key) {
       if (key === ' ') {
         if (startTime) {
-          const reactionTime = (Date.now() - startTime) / 1000;
-          console.log(`your time:`, reactionTime.toFixed(3));
+          // const reactionTime = (Date.now() - startTime) / 1000;
+          console.log(`your time:`, ((Date.now() - startTime) / 1000).toFixed(3));
           
           // process.stdin.removeListener('data', onKeyPress);
           process.stdin.setRawMode(false);
@@ -68,8 +68,9 @@ async function run(trail) {
   try {
     console.log(zoj_fard(trail))
     await ready()
-    let startTime = await action()
-    await key_press(startTime)
+    // let startTime = await action()
+    await action()
+    await key_press(Date.now())
     console.log(`end`)
     return run(trail + 1)
   }
