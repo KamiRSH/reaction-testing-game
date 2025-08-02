@@ -14,35 +14,39 @@ console.log('After seeing stars, press space as fast as you can')
 
 function ready() {
   return new Promise((resolve, reject) => {
-  setTimeout(() => {
-    console.log("Let's go")
-    resolve()
-  }, 3000)
+    setTimeout(() => {
+      console.log("Let's go")
+      resolve()
+    }, 3000)
 })
 }
 
 function action() {
   return new Promise((resolve, reject) => {
-  let delay = (Math.random() + 1) * 2
-  setTimeout(() => {
-    console.log("******")
-    resolve()
-  }, delay)
-})
+    let delay = (Math.random() + 1) * 2
+    let startTime = Date.now();
+    setTimeout(() => {
+      console.log("******")
+      resolve(startTime)
+    }, delay * 1000)
+  })
 }
 
-function key_press() {
+function key_press(start_time) {
   process.stdin.setRawMode(true);
   process.stdin.resume();
   process.stdin.setEncoding('utf8');
-
   process.stdin.on('data', function (key) {
     if (key === ' ') {
-      console.log('space detected');
-      process.exit()
+      if (startTime) {
+        const reactionTime = (Date.now() - startTime) / 1000;
+        console.log(`your time:`, reactionTime.toFixed(3));
+        process.exit();
+      }
     }
-  })  
+  })
 }
+
 
 function zoj_fard(trail) {
   if (trail % 2 == 0) {
@@ -57,11 +61,10 @@ async function run() {
   console.log(zoj_fard(trail))
   try {
     await ready()
-    await action()
-    let ct = 0
-    while(1) {
-        key_press()
-    }
+    let startTime = await action()
+    key_press(startTime)
+    console.log(`end`)
+    
   }
   catch {
     console.log('error catched')
@@ -69,7 +72,7 @@ async function run() {
 }
 
 let trail = 0
-while(1) {
+// while(1) {
 trail += 1
 run()
-}
+// }
